@@ -304,11 +304,13 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer
 # Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Type DWord -Value 2
 
 # Change default Explorer view to "Computer"
-Write-Host "Changing default Explorer view to `"Computer`"..."
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Type DWord -Value 1
+# Kyle comment this out
+# Write-Host "Changing default Explorer view to `"Computer`"..."
+# Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Type DWord -Value 1
 
 # Change default Explorer view to "Quick Access"
-# Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo"
+# Kyle uncomment this, prefer Quick Access
+Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo"
 
 # Show Computer shortcut on desktop
 # Write-Host "Showing Computer shortcut on desktop..."
@@ -398,14 +400,16 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer
 ##########
 
 # Disable OneDrive
-Write-Host "Disabling OneDrive..."
-If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive")) {
-	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" | Out-Null
-}
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Type DWord -Value 1
+# Kyle comment out, don't disable OneDrive
+# Write-Host "Disabling OneDrive..."
+# If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive")) {
+# 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" | Out-Null
+# }
+# Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Type DWord -Value 1
 
 # Enable OneDrive
-# Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC"
+# Kyle uncomment, enable OneDrive
+Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC"
 
 # Uninstall OneDrive (WINDOWS WILL NOT SYSPREP WITHOUT IT!)
 # Write-Host "Uninstalling OneDrive..."
@@ -446,18 +450,18 @@ Get-AppxPackage "Microsoft.BingNews" | Remove-AppxPackage
 Get-AppxPackage "Microsoft.BingSports" | Remove-AppxPackage
 Get-AppxPackage "Microsoft.BingWeather" | Remove-AppxPackage
 Get-AppxPackage "Microsoft.Getstarted" | Remove-AppxPackage
-Get-AppxPackage "Microsoft.MicrosoftOfficeHub" | Remove-AppxPackage
+# Get-AppxPackage "Microsoft.MicrosoftOfficeHub" | Remove-AppxPackage
 Get-AppxPackage "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage
-Get-AppxPackage "Microsoft.Office.OneNote" | Remove-AppxPackage
+# Get-AppxPackage "Microsoft.Office.OneNote" | Remove-AppxPackage
 Get-AppxPackage "Microsoft.People" | Remove-AppxPackage
 Get-AppxPackage "Microsoft.SkypeApp" | Remove-AppxPackage
 # Get-AppxPackage "Microsoft.Windows.Photos" | Remove-AppxPackage
 # Get-AppxPackage "Microsoft.WindowsAlarms" | Remove-AppxPackage
-Get-AppxPackage "Microsoft.WindowsCamera" | Remove-AppxPackage
+# Get-AppxPackage "Microsoft.WindowsCamera" | Remove-AppxPackage
 Get-AppxPackage "microsoft.windowscommunicationsapps" | Remove-AppxPackage
-Get-AppxPackage "Microsoft.WindowsMaps" | Remove-AppxPackage
+# Get-AppxPackage "Microsoft.WindowsMaps" | Remove-AppxPackage
 Get-AppxPackage "Microsoft.WindowsPhone" | Remove-AppxPackage
-Get-AppxPackage "Microsoft.WindowsSoundRecorder" | Remove-AppxPackage
+# Get-AppxPackage "Microsoft.WindowsSoundRecorder" | Remove-AppxPackage
 Get-AppxPackage "Microsoft.XboxApp" | Remove-AppxPackage
 # Get-AppxPackage "Microsoft.ZuneMusic" | Remove-AppxPackage
 # Get-AppxPackage "Microsoft.ZuneVideo" | Remove-AppxPackage
@@ -607,30 +611,32 @@ foreach ($service in $services) {
 #
 Import-Module -DisableNameChecking $PSScriptRoot\..\lib\New-FolderForced.psm1
 
-Write-Output "Disable automatic download and installation of Windows updates"
-New-FolderForced -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\WindowsUpdate\AU"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\WindowsUpdate\AU" "NoAutoUpdate" 0
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\WindowsUpdate\AU" "AUOptions" 2
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\WindowsUpdate\AU" "ScheduledInstallDay" 0
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\WindowsUpdate\AU" "ScheduledInstallTime" 3
+# Kyle comment out to keep windows updates enabled
+# Write-Output "Disable automatic download and installation of Windows updates"
+# New-FolderForced -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\WindowsUpdate\AU"
+# Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\WindowsUpdate\AU" "NoAutoUpdate" 0
+# Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\WindowsUpdate\AU" "AUOptions" 2
+# Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\WindowsUpdate\AU" "ScheduledInstallDay" 0
+# Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\WindowsUpdate\AU" "ScheduledInstallTime" 3
 
 Write-Output "Disable seeding of updates to other computers via Group Policies"
 New-FolderForced -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" "DODownloadMode" 0
 
-#echo "Disabling automatic driver update"
-#sp "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" "SearchOrderConfig" 0
+# Kyle enable automatic driver updates
+echo "Disabling automatic driver update"
+sp "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" "SearchOrderConfig" 0
 
 $objSID = New-Object System.Security.Principal.SecurityIdentifier "S-1-1-0"
 $EveryOne = $objSID.Translate( [System.Security.Principal.NTAccount]).Value
 
 
-Write-Output "Disable 'Updates are available' message"
+# Write-Output "Disable 'Updates are available' message"
 
-takeown /F "$env:WinDIR\System32\MusNotification.exe"
-icacls "$env:WinDIR\System32\MusNotification.exe" /deny "$($EveryOne):(X)"
-takeown /F "$env:WinDIR\System32\MusNotificationUx.exe"
-icacls "$env:WinDIR\System32\MusNotificationUx.exe" /deny "$($EveryOne):(X)"
+# takeown /F "$env:WinDIR\System32\MusNotification.exe"
+# icacls "$env:WinDIR\System32\MusNotification.exe" /deny "$($EveryOne):(X)"
+# takeown /F "$env:WinDIR\System32\MusNotificationUx.exe"
+# icacls "$env:WinDIR\System32\MusNotificationUx.exe" /deny "$($EveryOne):(X)"
 
 
 # This script removes unwanted Apps that come with Windows. If you  do not want
@@ -661,10 +667,10 @@ $apps = @(
     "Microsoft.MixedReality.Portal"
     "Microsoft.MicrosoftPowerBIForWindows"
     "Microsoft.MicrosoftSolitaireCollection"
-    #"Microsoft.MicrosoftStickyNotes"
+    # "Microsoft.MicrosoftStickyNotes"
     "Microsoft.MinecraftUWP"
     "Microsoft.NetworkSpeedTest"
-    "Microsoft.Office.OneNote"
+    # "Microsoft.Office.OneNote"
     "Microsoft.People"
     "Microsoft.Print3D"
     "Microsoft.SkypeApp"
@@ -672,11 +678,11 @@ $apps = @(
     # "Microsoft.Windows.Photos"
     # "Microsoft.WindowsAlarms"
     # "Microsoft.WindowsCalculator"
-    "Microsoft.WindowsCamera"
+    # "Microsoft.WindowsCamera"
     "microsoft.windowscommunicationsapps"
-    "Microsoft.WindowsMaps"
+    # "Microsoft.WindowsMaps"
     "Microsoft.WindowsPhone"
-    "Microsoft.WindowsSoundRecorder"
+    # "Microsoft.WindowsSoundRecorder"
     #"Microsoft.WindowsStore"   # can't be re-installed
     "Microsoft.Xbox.TCUI"
     "Microsoft.XboxApp"
@@ -814,65 +820,66 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" 
 #   Description:
 # This script will remove and disable OneDrive integration.
 
-Import-Module -DisableNameChecking $PSScriptRoot\..\lib\New-FolderForced.psm1
-Import-Module -DisableNameChecking $PSScriptRoot\..\lib\take-own.psm1
+# Kyle keep OneDrive
+# Import-Module -DisableNameChecking $PSScriptRoot\..\lib\New-FolderForced.psm1
+# Import-Module -DisableNameChecking $PSScriptRoot\..\lib\take-own.psm1
 
-Write-Output "Kill OneDrive process"
-taskkill.exe /F /IM "OneDrive.exe"
-taskkill.exe /F /IM "explorer.exe"
+# Write-Output "Kill OneDrive process"
+# taskkill.exe /F /IM "OneDrive.exe"
+# taskkill.exe /F /IM "explorer.exe"
 
-Write-Output "Remove OneDrive"
-if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
-    & "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
-}
-if (Test-Path "$env:systemroot\SysWOW64\OneDriveSetup.exe") {
-    & "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
-}
+# Write-Output "Remove OneDrive"
+# if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
+#     & "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
+# }
+# if (Test-Path "$env:systemroot\SysWOW64\OneDriveSetup.exe") {
+#     & "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
+# }
 
-Write-Output "Removing OneDrive leftovers"
-Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
-Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:programdata\Microsoft OneDrive"
-Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:systemdrive\OneDriveTemp"
+# Write-Output "Removing OneDrive leftovers"
+# Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
+# Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:programdata\Microsoft OneDrive"
+# Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:systemdrive\OneDriveTemp"
 # check if directory is empty before removing:
-If ((Get-ChildItem "$env:userprofile\OneDrive" -Recurse | Measure-Object).Count -eq 0) {
-    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:userprofile\OneDrive"
-}
+# If ((Get-ChildItem "$env:userprofile\OneDrive" -Recurse | Measure-Object).Count -eq 0) {
+#     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:userprofile\OneDrive"
+# }
 
-Write-Output "Disable OneDrive via Group Policies"
-New-FolderForced -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1
+# Write-Output "Disable OneDrive via Group Policies"
+# New-FolderForced -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive"
+# Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1
 
-Write-Output "Remove Onedrive from explorer sidebar"
-New-PSDrive -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" -Name "HKCR"
-mkdir -Force "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
-Set-ItemProperty -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0
-mkdir -Force "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
-Set-ItemProperty -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0
-Remove-PSDrive "HKCR"
+# Write-Output "Remove Onedrive from explorer sidebar"
+# New-PSDrive -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" -Name "HKCR"
+# mkdir -Force "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
+# Set-ItemProperty -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0
+# mkdir -Force "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
+# Set-ItemProperty -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0
+# Remove-PSDrive "HKCR"
 
 # Thank you Matthew Israelsson
-Write-Output "Removing run hook for new users"
-reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
-reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f
-reg unload "hku\Default"
+# Write-Output "Removing run hook for new users"
+# reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
+# reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f
+# reg unload "hku\Default"
 
-Write-Output "Removing startmenu entry"
-Remove-Item -Force -ErrorAction SilentlyContinue "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
+# Write-Output "Removing startmenu entry"
+# Remove-Item -Force -ErrorAction SilentlyContinue "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
 
-Write-Output "Removing scheduled task"
-Get-ScheduledTask -TaskPath '\' -TaskName 'OneDrive*' -ea SilentlyContinue | Unregister-ScheduledTask -Confirm:$false
+# Write-Output "Removing scheduled task"
+# Get-ScheduledTask -TaskPath '\' -TaskName 'OneDrive*' -ea SilentlyContinue | Unregister-ScheduledTask -Confirm:$false
 
-Write-Output "Restarting explorer"
-Start-Process "explorer.exe"
+# Write-Output "Restarting explorer"
+# Start-Process "explorer.exe"
 
-Write-Output "Waiting for explorer to complete loading"
-Start-Sleep 10
+# Write-Output "Waiting for explorer to complete loading"
+# Start-Sleep 10
 
-Write-Output "Removing additional OneDrive leftovers"
-foreach ($item in (Get-ChildItem "$env:WinDir\WinSxS\*onedrive*")) {
-    Takeown-Folder $item.FullName
-    Remove-Item -Recurse -Force $item.FullName
-}
+# Write-Output "Removing additional OneDrive leftovers"
+# foreach ($item in (Get-ChildItem "$env:WinDir\WinSxS\*onedrive*")) {
+#     Takeown-Folder $item.FullName
+#     Remove-Item -Recurse -Force $item.FullName
+# }
 
 
 
@@ -1037,19 +1044,20 @@ reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Advertising
 reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo" /v "Enabled" /t REG_DWORD /d "0" /f
 
 
+# Kyle comment out
 # Set Windows to Dark Mode #
 
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /f
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /v "AppsUseLightTheme" /t "REG_DWORD" /d "0" /f
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /v "SystemUsesLightTheme" /t "REG_DWORD" /d "0" /f
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /f
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /f
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t "REG_DWORD" /d "0" /f
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "SystemUsesLightTheme" /t "REG_DWORD" /d "0" /f
-reg add "HKEY_USERS\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /f
-reg add "HKEY_USERS\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /f
-reg add "HKEY_USERS\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t "REG_DWORD" /d "0" /f
-reg add "HKEY_USERS\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "SystemUsesLightTheme" /t "REG_DWORD" /d "0" /f
+# reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /f
+# reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /v "AppsUseLightTheme" /t "REG_DWORD" /d "0" /f
+# reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /v "SystemUsesLightTheme" /t "REG_DWORD" /d "0" /f
+# reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /f
+# reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /f
+# reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t "REG_DWORD" /d "0" /f
+# reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "SystemUsesLightTheme" /t "REG_DWORD" /d "0" /f
+# reg add "HKEY_USERS\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /f
+# reg add "HKEY_USERS\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /f
+# reg add "HKEY_USERS\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t "REG_DWORD" /d "0" /f
+# reg add "HKEY_USERS\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "SystemUsesLightTheme" /t "REG_DWORD" /d "0" /f
 
 ##########
 # Restart
